@@ -1,5 +1,8 @@
 package com.example.raldoron.producthuntapp.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,18 +10,43 @@ import com.google.gson.annotations.SerializedName;
  * Created by Raldoron on 10.09.17.
  */
 
-public class Screenshot {
+public class Screenshot implements Parcelable {
 
     @SerializedName("300px")
     @Expose
-    private String screenshot;
+    private String screenshot_url;
 
-    public String getScreenshot() {
-        return screenshot;
+    protected Screenshot(Parcel in) {
+        screenshot_url = in.readString();
     }
 
-    public void setScreenshot(String screenshot) {
-        this.screenshot = screenshot;
+    public static final Creator<Screenshot> CREATOR = new Creator<Screenshot>() {
+        @Override
+        public Screenshot createFromParcel(Parcel in) {
+            return new Screenshot(in);
+        }
+
+        @Override
+        public Screenshot[] newArray(int size) {
+            return new Screenshot[size];
+        }
+    };
+
+    public String getScreenshotUrl() {
+        return screenshot_url;
     }
 
+    public void setScreenshotUrl(String screenshot) {
+        this.screenshot_url = screenshot;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(screenshot_url);
+    }
 }

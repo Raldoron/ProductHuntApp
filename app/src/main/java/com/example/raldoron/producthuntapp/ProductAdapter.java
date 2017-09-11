@@ -18,12 +18,11 @@ import java.util.List;
 public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
 
     private List<Product> products;
+    private ListListener listener;
 
-    public ProductAdapter(List<Product> products){
-        this.products = products;
-    }
-    public ProductAdapter(Posts posts) {
+    public ProductAdapter(Posts posts, ListListener listener) {
         this.products = posts.getPosts();
+        this.listener = listener;
     }
 
     @Override
@@ -33,8 +32,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ProductViewHolder holder, int position) {
-        Product product = products.get(position);
+    public void onBindViewHolder(final ProductViewHolder holder, int position) {
+        final Product product = products.get(position);
         holder.productName.setText(product.getName());
         holder.productDescription.setText(product.getDescription());
         holder.productUpvotes.setText("Upvotes: " + String.valueOf(product.getUpvotes()));
@@ -43,6 +42,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
                     .load(product.getThumbnail().getImage_url())
                     .into(holder.productThumbnail);
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               listener.onClick(holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -51,5 +56,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
             return 0;
         else
             return products.size();
+    }
+
+    public interface ListListener {
+        void onClick(int position);
     }
 }

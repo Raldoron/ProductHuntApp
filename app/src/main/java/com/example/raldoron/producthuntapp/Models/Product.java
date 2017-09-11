@@ -1,5 +1,8 @@
 package com.example.raldoron.producthuntapp.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Raldoron on 06.09.17.
  */
 
-public class Product {
+public class Product implements Parcelable{
 
     @SerializedName("name")
     @Expose
@@ -27,6 +30,26 @@ public class Product {
     @SerializedName("screenshot_url")
     @Expose
     private Screenshot screenshot;
+
+    protected Product(Parcel in) {
+        name = in.readString();
+        description = in.readString();
+        upvotes = in.readInt();
+        redirect_url = in.readString();
+        screenshot = in.readParcelable(Screenshot.class.getClassLoader());
+    }
+
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -77,4 +100,17 @@ public class Product {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeInt(upvotes);
+        dest.writeString(redirect_url);
+        dest.writeParcelable(screenshot, flags);
+    }
 }

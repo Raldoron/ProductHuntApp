@@ -1,5 +1,6 @@
 package com.example.raldoron.producthuntapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.raldoron.producthuntapp.Models.Posts;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,7 +41,14 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Posts> call, Response<Posts> response) {
                 Log.d(RETROFIT_TAG, response.toString());
                 products.setPosts(response.body());
-                productAdapter = new ProductAdapter(products);
+                productAdapter = new ProductAdapter(products, new ProductAdapter.ListListener() {
+                    @Override
+                    public void onClick(int position) {
+                        Intent intent = new Intent(MainActivity.this, ProductActivity.class);
+                        intent.putExtra("product", products.getPosts().get(position));
+                        startActivity(intent);
+                    }
+                });
                 productsRecyclerView.setAdapter(productAdapter);
             }
 
