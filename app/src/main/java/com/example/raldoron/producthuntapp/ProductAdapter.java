@@ -1,5 +1,6 @@
 package com.example.raldoron.producthuntapp;
 
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
             return 0;
         else
             return products.size();
+    }
+
+    public void update(Posts posts){
+        this.products = posts.getPosts();
     }
 
     public interface ListListener {

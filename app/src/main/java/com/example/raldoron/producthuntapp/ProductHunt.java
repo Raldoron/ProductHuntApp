@@ -10,12 +10,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ProductHunt {
     private static Retrofit retrofit;
 
-
     public static ProductHuntAPI getAPI() {
         retrofit = new Retrofit.Builder()
                 .baseUrl(Config.PRODUCTHUNT_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
         return retrofit.create(ProductHuntAPI.class);
     }
+
 }
