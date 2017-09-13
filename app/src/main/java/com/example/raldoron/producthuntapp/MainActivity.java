@@ -11,10 +11,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import com.example.raldoron.producthuntapp.Models.Categories;
 import com.example.raldoron.producthuntapp.Models.Posts;
 
-
-import java.util.ArrayList;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private Toolbar toolbar;
     private Spinner spinner;
     private CategoriesAdapter categoriesAdapter;
-    private ArrayList<String> category;
+    private Categories categories;
     private String selected_category;
     private Posts products;
     private ProductHuntClient productHuntClient;
@@ -38,9 +37,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_main);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setRefreshing(true);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         spinner = (Spinner) findViewById(R.id.spinner);
 
         productsRecyclerView = (RecyclerView) findViewById(R.id.product_list);
@@ -48,23 +48,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         productsRecyclerView.setLayoutManager(layoutManager);
 
         products = new Posts();
+        categories = new Categories();
         selected_category = "tech";
-        category = new ArrayList<String>();
-        category.add("tech");
-        category.add("games");
 
-        categoriesAdapter = new CategoriesAdapter(MainActivity.this, category);
-        spinner.setAdapter(categoriesAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selected_category = parent.getItemAtPosition(position).toString();
-                productHuntClient.getPosts(selected_category, MainActivity.this);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
 
         productHuntClient = new ProductHuntClient(new ProductHuntClient.ResponseListener() {
             @Override
@@ -72,10 +58,33 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 products.setPosts(response.body());
                 productAdapter.update(products);
                 productsRecyclerView.setAdapter(productAdapter);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }, new ProductHuntClient.CategoriesListener() {
+            @Override
+            public void onSuccess(Response<Categories> response) {
+                categories.setCategories(response.body());
+                categoriesAdapter.update(categories);
+                spinner.setAdapter(categoriesAdapter);
             }
         });
+        productHuntClient.getCategories(MainActivity.this);
         productHuntClient.getPosts(selected_category, MainActivity.this);
 
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                swipeRefreshLayout.setRefreshing(true);
+                selected_category = categories.getCategories().get(position).getSlug();
+                productHuntClient.getPosts(selected_category, MainActivity.this);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        categoriesAdapter = new CategoriesAdapter(MainActivity.this, categories.getCategories());
         productAdapter = new ProductAdapter(products, new ProductAdapter.ListListener() {
             @Override
             public void onClick(int position) {
@@ -92,6 +101,5 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
         productHuntClient.getPosts(selected_category, MainActivity.this);
-        swipeRefreshLayout.setRefreshing(false);
     }
 }

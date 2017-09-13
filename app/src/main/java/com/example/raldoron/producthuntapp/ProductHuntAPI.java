@@ -1,5 +1,7 @@
 package com.example.raldoron.producthuntapp;
 
+import com.example.raldoron.producthuntapp.Models.Categories;
+import com.example.raldoron.producthuntapp.Models.Category;
 import com.example.raldoron.producthuntapp.Models.Posts;
 
 import retrofit2.Call;
@@ -20,5 +22,8 @@ public interface ProductHuntAPI {
             "Host: api.producthunt.com"
     })
     @GET("/v1/posts/all?")
-    Call<Posts> getData(@Header("Authorization") String accessToken, @Query("search[category]") String categoryName);
+    Call<Posts> getPosts(@Header("Authorization") String accessToken, @Query("search[category]") String categoryName);
+
+    @GET("/v1/categories")
+    Call<Categories> getCategories(@Header("Authorization") String accessToken);
 }
