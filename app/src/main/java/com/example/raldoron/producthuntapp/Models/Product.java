@@ -75,31 +75,6 @@ public class Product implements Parcelable{
         return screenshot;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
-    }
-
-    public void setRedirect_url(String redirect_url) {
-        this.redirect_url = redirect_url;
-    }
-
-    public void setThumbnail_url(Thumbnail thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public void setScreenshot_url(Screenshot screenshot) {
-        this.screenshot = screenshot;
-    }
-
-
     @Override
     public int describeContents() {
         return 0;

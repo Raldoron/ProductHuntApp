@@ -19,10 +19,6 @@ public class Posts {
         return posts;
     }
 
-    public void setPosts(List<Product> posts) {
-        this.posts = posts;
-    }
-
     public void setPosts(Posts posts) {
         this.posts = posts.posts;
     }

@@ -36,10 +36,6 @@ public class Screenshot implements Parcelable {
         return screenshot_url;
     }
 
-    public void setScreenshotUrl(String screenshot) {
-        this.screenshot_url = screenshot;
-    }
-
     @Override
     public int describeContents() {
         return 0;

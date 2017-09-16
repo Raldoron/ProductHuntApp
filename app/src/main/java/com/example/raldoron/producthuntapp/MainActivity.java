@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
         spinner = (Spinner) findViewById(R.id.spinner);
 
         productsRecyclerView = (RecyclerView) findViewById(R.id.product_list);
@@ -60,12 +61,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 productsRecyclerView.setAdapter(productAdapter);
                 swipeRefreshLayout.setRefreshing(false);
             }
+
+            @Override
+            public void onFailure() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }, new ProductHuntClient.CategoriesListener() {
             @Override
             public void onSuccess(Response<Categories> response) {
                 categories.setCategories(response.body());
                 categoriesAdapter.update(categories);
                 spinner.setAdapter(categoriesAdapter);
+                spinner.setSelection(categoriesAdapter.getPositionOfTechTopic());
             }
         });
         productHuntClient.getCategories(MainActivity.this);

@@ -28,12 +28,17 @@ public class ProductHuntClient {
         ProductHunt.getAPI().getPosts(Config.ACCESS_TOKEN, category).enqueue(new Callback<Posts>() {
             @Override
             public void onResponse(Call<Posts> call, Response<Posts> response) {
-                responseListener.onSuccess(response);
+                if (response.isSuccessful()) {
+                    responseListener.onSuccess(response);
+                } else {
+                    Toast.makeText(context, "Get posts: " + response.message(), Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public void onFailure(Call<Posts> call, Throwable t) {
                 Toast.makeText(context, "Something wrong with posts!", Toast.LENGTH_LONG).show();
+                responseListener.onFailure();
             }
         });
     }
@@ -42,7 +47,11 @@ public class ProductHuntClient {
         ProductHunt.getAPI().getCategories(Config.ACCESS_TOKEN).enqueue(new Callback<Categories>() {
             @Override
             public void onResponse(Call<Categories> call, Response<Categories> response) {
-                categoriesListener.onSuccess(response);
+                if (response.isSuccessful()) {
+                    categoriesListener.onSuccess(response);
+                } else {
+                    Toast.makeText(context, "Get categories: " + response.message(), Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
@@ -54,6 +63,7 @@ public class ProductHuntClient {
 
     public interface ResponseListener{
         void onSuccess(Response<Posts> response);
+        void onFailure();
     }
 
     public interface CategoriesListener{

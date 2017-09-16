@@ -62,6 +62,14 @@ public class CategoriesAdapter extends BaseAdapter {
         return 0;
     }
 
+    public int getPositionOfTechTopic() {
+        if (categories != null)
+            for (Category category: categories)
+                if (category.getName().equals("Tech"))
+                    return categories.indexOf(category);
+        return 0;
+    }
+
     public View getCategroyRow(int position, View convertView, ViewGroup parent){
         View row = layoutInflater.inflate(R.layout.item_spinner, parent, false);
         TextView categoryName = (TextView) row.findViewById(R.id.category_name);
