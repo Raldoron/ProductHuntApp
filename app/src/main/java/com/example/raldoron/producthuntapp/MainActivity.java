@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.raldoron.producthuntapp.Models.Categories;
 import com.example.raldoron.producthuntapp.Models.Posts;
@@ -17,6 +19,8 @@ import com.example.raldoron.producthuntapp.Models.Posts;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
+
+    private final String PRODUCTHUNT_TAG = "PRODUCTHUNT_CLIENT";
 
     private LinearLayoutManager layoutManager;
     private RecyclerView productsRecyclerView;
@@ -56,27 +60,46 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         productHuntClient = new ProductHuntClient(new ProductHuntClient.ResponseListener() {
             @Override
             public void onSuccess(Response<Posts> response) {
-                products.setPosts(response.body());
-                productAdapter.update(products);
-                productsRecyclerView.setAdapter(productAdapter);
-                swipeRefreshLayout.setRefreshing(false);
+                if (response.isSuccessful()) {
+                    products.setPosts(response.body());
+                    productAdapter.update(products);
+                    productsRecyclerView.setAdapter(productAdapter);
+                    swipeRefreshLayout.setRefreshing(false);
+                } else {
+                    Toast.makeText(MainActivity.this, "Posts response isn't successful!", Toast.LENGTH_LONG).show();
+                    Log.d(PRODUCTHUNT_TAG, response.message());
+                }
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(Throwable t) {
+                Toast.makeText(MainActivity.this, "Failure on posts!", Toast.LENGTH_LONG).show();
+                Log.e(PRODUCTHUNT_TAG, t.getMessage());
                 swipeRefreshLayout.setRefreshing(false);
             }
         }, new ProductHuntClient.CategoriesListener() {
             @Override
             public void onSuccess(Response<Categories> response) {
-                categories.setCategories(response.body());
-                categoriesAdapter.update(categories);
-                spinner.setAdapter(categoriesAdapter);
-                spinner.setSelection(categoriesAdapter.getPositionOfTechTopic());
+                if (response.isSuccessful()){
+                    categories.setCategories(response.body());
+                    categoriesAdapter.update(categories);
+                    spinner.setAdapter(categoriesAdapter);
+                    spinner.setSelection(categoriesAdapter.getPositionOfTechTopic());
+                } else {
+                    Toast.makeText(MainActivity.this, "Categories response isn't successful!", Toast.LENGTH_LONG).show();
+                    Log.d(PRODUCTHUNT_TAG, response.message());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(MainActivity.this, "Failure on categories!" + t.toString(), Toast.LENGTH_LONG).show();
+                Log.e(PRODUCTHUNT_TAG, t.getMessage());
             }
         });
-        productHuntClient.getCategories(MainActivity.this);
-        productHuntClient.getPosts(selected_category, MainActivity.this);
+        productHuntClient.getCategories();
+        productHuntClient.getPosts(selected_category);
 
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -84,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 swipeRefreshLayout.setRefreshing(true);
                 selected_category = categories.getCategories().get(position).getSlug();
-                productHuntClient.getPosts(selected_category, MainActivity.this);
+                productHuntClient.getPosts(selected_category);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -107,6 +130,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-        productHuntClient.getPosts(selected_category, MainActivity.this);
+        productHuntClient.getPosts(selected_category);
     }
 }

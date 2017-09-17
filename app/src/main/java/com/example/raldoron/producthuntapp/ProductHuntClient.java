@@ -1,8 +1,5 @@
 package com.example.raldoron.producthuntapp;
 
-import android.content.Context;
-import android.widget.Toast;
-
 import com.example.raldoron.producthuntapp.Models.Categories;
 import com.example.raldoron.producthuntapp.Models.Posts;
 
@@ -24,49 +21,41 @@ public class ProductHuntClient {
         this.categoriesListener = categoriesListener;
     }
 
-    public void getPosts(String category, final Context context) {
+    public void getPosts(String category) {
         ProductHunt.getAPI().getPosts(Config.ACCESS_TOKEN, category).enqueue(new Callback<Posts>() {
             @Override
             public void onResponse(Call<Posts> call, Response<Posts> response) {
-                if (response.isSuccessful()) {
-                    responseListener.onSuccess(response);
-                } else {
-                    Toast.makeText(context, "Get posts: " + response.message(), Toast.LENGTH_LONG).show();
-                }
+                responseListener.onSuccess(response);
             }
 
             @Override
             public void onFailure(Call<Posts> call, Throwable t) {
-                Toast.makeText(context, "Something wrong with posts!", Toast.LENGTH_LONG).show();
-                responseListener.onFailure();
+                responseListener.onFailure(t);
             }
         });
     }
 
-    public void getCategories(final Context context) {
+    public void getCategories() {
         ProductHunt.getAPI().getCategories(Config.ACCESS_TOKEN).enqueue(new Callback<Categories>() {
             @Override
             public void onResponse(Call<Categories> call, Response<Categories> response) {
-                if (response.isSuccessful()) {
-                    categoriesListener.onSuccess(response);
-                } else {
-                    Toast.makeText(context, "Get categories: " + response.message(), Toast.LENGTH_LONG).show();
-                }
+                categoriesListener.onSuccess(response);
             }
 
             @Override
             public void onFailure(Call<Categories> call, Throwable t) {
-                Toast.makeText(context, "Something wrong with categories!", Toast.LENGTH_LONG).show();
+                categoriesListener.onFailure(t);
             }
         });
     }
 
     public interface ResponseListener{
         void onSuccess(Response<Posts> response);
-        void onFailure();
+        void onFailure(Throwable throwable);
     }
 
     public interface CategoriesListener{
         void onSuccess(Response<Categories> response);
+        void onFailure(Throwable throwable);
     }
 }
