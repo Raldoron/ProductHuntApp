@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.example.raldoron.producthuntapp.Models.Categories;
 import com.example.raldoron.producthuntapp.Models.Posts;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
@@ -23,12 +25,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private final String PRODUCTHUNT_TAG = "PRODUCTHUNT_CLIENT";
 
     private LinearLayoutManager layoutManager;
-    private RecyclerView productsRecyclerView;
     private ProductAdapter productAdapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
 
-    private Toolbar toolbar;
-    private Spinner spinner;
+    @BindView(R.id.product_list) RecyclerView productsRecyclerView;
+    @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.spinner) Spinner spinner;
+
     private CategoriesAdapter categoriesAdapter;
     private Categories categories;
     private String selected_category;
@@ -39,16 +42,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        ButterKnife.bind(this);
+
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setRefreshing(true);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-        spinner = (Spinner) findViewById(R.id.spinner);
 
-        productsRecyclerView = (RecyclerView) findViewById(R.id.product_list);
         layoutManager = new LinearLayoutManager(this);
         productsRecyclerView.setLayoutManager(layoutManager);
 

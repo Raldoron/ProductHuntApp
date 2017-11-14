@@ -39,7 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/name"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/product_screenshot_content_description"/>
 
         <TextView
             android:id="@+id/description"
@@ -68,7 +69,7 @@
             android:layout_below="@+id/upvotes"
             android:layout_centerHorizontal="true"
             android:paddingTop="5dp"
-            android:text="Get it" />
+            android:text="@string/get_it_button_text" />
 
     </RelativeLayout>
 </LinearLayout>

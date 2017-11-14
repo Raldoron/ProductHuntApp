@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ProductHuntApp</string>
+
+    <string name="get_it_button_text">Get it</string>
+
+    <string name="product_screenshot_content_description">Product screenshot</string>
+    <string name="product_thumbnail_content_description">Thumbnail screenshot</string>
+
+    <string name="upvotes_string">Upvotes: %1$d</string>
 </resources>

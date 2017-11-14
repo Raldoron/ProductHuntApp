@@ -14,27 +14,31 @@ import android.widget.TextView;
 import com.example.raldoron.producthuntapp.Models.Product;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Raldoron on 11.09.17.
  */
 
 public class ProductActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-
     private Product product;
 
-    private TextView name;
-    private ImageView screenshot;
-    private TextView description;
-    private TextView upvotes;
-    private Button redirect_button;
+    @BindView(R.id.product_toolbar) Toolbar toolbar;
+
+    @BindView(R.id.name) TextView name;
+    @BindView(R.id.screenshot) ImageView screenshot;
+    @BindView(R.id.description) TextView description;
+    @BindView(R.id.upvotes) TextView upvotes;
+    @BindView(R.id.redirect_button) Button redirect_button;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
-        toolbar = (Toolbar) findViewById(R.id.product_toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,16 +49,15 @@ public class ProductActivity extends AppCompatActivity {
 
         product = getIntent().getParcelableExtra("product");
 
-        name = (TextView) findViewById(R.id.name);
-        screenshot = (ImageView) findViewById(R.id.screenshot);
-        description = (TextView) findViewById(R.id.description);
-        upvotes = (TextView) findViewById(R.id.upvotes);
-        redirect_button = (Button) findViewById(R.id.redirect_button);
-
         if (product != null) {
             name.setText(product.getName());
             description.setText(product.getDescription());
-            upvotes.setText("Upvotes: " + String.valueOf(product.getUpvotes()));
+            upvotes.setText(
+                    getResources().getString(
+                            R.string.upvotes_string,
+                            product.getUpvotes()
+                    )
+            );
 
             if (product.getScreenshot().getScreenshotUrl() != null) {
                 Picasso.with(getBaseContext())
